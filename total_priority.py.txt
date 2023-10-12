@@ -1,0 +1,23 @@
+import heapq
+from prioritizingTechniques import prioritizingTechniques
+class Total_Prioritization(prioritizingTechniques):
+    def __init__(self, test_cases, criteria):
+        super(Total_Prioritization, self).__init__(test_cases, criteria)
+      
+    def get_executed_statementsvalue(self, test_case):
+        return test_case[3]
+            
+    def get_executed_branchesvalue(self,test_case):
+        return test_case[4]
+                            
+    def coverage(self):
+        list_totaltestcases = []
+        if self.criteria == "statement":
+            list_totaltestcases = sorted(self.test_cases, key=lambda x: self.get_executed_statementsvalue(x), reverse=True)
+            print("sorted statement list - ")
+
+        elif self.criteria == "branch":
+            list_totaltestcases = sorted(self.test_cases, key=lambda x: self.get_executed_branchesvalue(x), reverse=True)
+            print("sorted branch list - ")
+
+        return self.get(list_totaltestcases,self.criteria)

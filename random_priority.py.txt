@@ -1,0 +1,12 @@
+import random
+from prioritizingTechniques import prioritizingTechniques
+
+class Random_Prioritization(prioritizingTechniques):
+    def __init__(self, test_cases, criteria):
+        super(Random_Prioritization, self).__init__(test_cases, criteria)
+
+    def coverage(self):
+        listfor_randomtestcases = self.test_cases.copy()
+        random.shuffle(listfor_randomtestcases)
+        return self.get(listfor_randomtestcases,self.criteria)
+	

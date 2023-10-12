@@ -1,0 +1,53 @@
+from prioritizingTechniques import prioritizingTechniques
+
+class Additional_Prioritization(prioritizingTechniques):
+    def __init__(self, test_cases, criteria):
+        super(Additional_Prioritization, self).__init__(test_cases, criteria)
+
+    def coverage(self):
+        selected_tests = []
+        total = set()
+        covered = set()
+
+        # computing total lines covered by all testcases
+        for test_case in self.test_cases:
+            coverage_info = self.get_coverage(test_case,self.criteria)
+            total.update(coverage_info['lines'])
+        #temp_test_cases = list(self.test_cases)
+        generated_testcases = self.test_cases.copy() 
+        # (i) select a test case that yields the greatest additional coverage; and 
+        # (ii) then adjust the coverage information on subsequent test cases to indicate their coverage of statements/branches not yet covered
+        while len(covered) < len(total):
+            #sort the uncovered test cases based on # uncovered statements 
+            selected_test_case = self.select_max_coverage(total,covered,generated_testcases,self.criteria)
+            selected_tests.append(selected_test_case)
+            coverage_info = self.get_coverage(selected_test_case,self.criteria)
+            covered.update(coverage_info["lines"])
+        return selected_tests
+
+    @classmethod
+    def select_max_coverage(self,total,executed,test_cases,criteria):
+        # select the test case that yields the greatest additional coverage
+        #uncovered = total.difference(covered)
+        #max_covered = 0
+        #selected_test_index = 0
+        # for index in range(len(test_cases)):
+        #     coverage_info = self.get_coverage(test_cases[index],criteria)
+        #     count = len(uncovered.intersection(coverage_info["lines"]))
+        #     if count > max_covered:
+        #         max_covered = count
+        #         selected_test_index = index
+        # return test_cases.pop(selected_test_index)
+
+        unexecuted = total - executed
+        max_covered = 0
+        index_maxcoverage = 0
+        index = 0
+        while index < len(test_cases):
+            coverage_info = self.get_coverage(test_cases[index], criteria)
+            covered_count = len(unexecuted & coverage_info["lines"])
+            if covered_count > max_covered:
+                max_covered = covered_count
+                index_maxcoverage = index
+            index += 1
+        return test_cases.pop(index_maxcoverage)

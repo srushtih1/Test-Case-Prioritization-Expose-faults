@@ -1,0 +1,47 @@
+import json
+
+class jsonParser:
+
+    def __init__(self,benchmark,path):
+        self.benchmark = benchmark
+        self.coverage_path = path
+        self.test_cases = []
+
+    def coverageInfo_parse(self,testCaseNumber,filepath):
+        all_nodes = 0   # total_statements
+        executed_nodes = 0 # statements
+        all_edges = 0 # total_branches
+        executed_edges = 0 # branches
+        executedNodes = set()
+        executedEdges = set()
+        #objectTc = jsonParser.objectForTestCase(testCaseNumber,all_nodes,all_edges,executedNodes,executedEdges)
+
+        # Load the JSON file
+        #filepath = '../benchmarks/printtokens/coverage/7/printtokens.gcov.json'
+        with open(filepath, 'r') as file:
+            coverage_data = json.load(file)
+        
+        alljsondata = coverage_data['files']
+
+        #for file_data in coverage_data["files"]:
+        for file_data in alljsondata:
+            for line_data in file_data["lines"]:
+                if line_data["count"] > 0:
+                    executed_nodes += 1
+                    executedNodes.add(line_data["line_number"])
+                all_nodes += 1
+                if "branches" in line_data:
+                    for branch_data in line_data["branches"]:
+                        if branch_data is not None:
+                            all_edges += 1
+                            if branch_data["fallthrough"] or branch_data["count"] > 0:
+                                executed_edges += 1
+                                executedEdges.add((line_data["line_number"]))
+
+        print("Total statements:", all_nodes)
+        print("Executed statements:", executed_nodes)
+        print("Total branches:", all_edges)
+        print("Executed branches:", executed_edges)
+        #self.test_cases.append(objectForTestCase(testCaseNumber,all_nodes,all_edges,executedNodes,executedEdges))
+        self.test_cases.append([testCaseNumber,all_nodes,all_edges,executedNodes,executedEdges])
+        return self.test_cases
